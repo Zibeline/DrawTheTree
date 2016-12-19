@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.params=
+comment0.target=DrawableNode\ DrawableLeft()
+comment1.params=
+comment1.target=DrawableNode\ DrawableRight()
+comment2.params=
+comment2.target=java.lang.String\ DrawableLabel()
+comment3.params=
+comment3.target=boolean\ DrawableRed()
+numComments=4
