@@ -164,9 +164,36 @@ public class SearchTree implements DrawableTree {
 }
 ```
 
+## Le constructeur de DrawTree
+
+Ici au dessus nous avons vu le constructeur de DrawTree sous sa forme la plus simple : avec comme seul argument l'arbre qu'on veut afficher.
+
+En réalité, il est pobbible de lui passer deux argument supplémentaires facultatifs :
+
+```java
+DrawTree(DrawableTree tree, boolean transparent, boolean youWantTheView)
+```
+
+* `boolean transparent` : si il vaut true, les images affichées et exportées en png seront transparentes (sans fond) [par défaut: false]
+* `boolean youWantTheView` : si il vaut true, une fenêtre avec l'arbre sera affichée et si il vaut false il créera seulement l'objet [par défaut: true]
+
+Mettre `youWantTheView` à false peut être intéressant si on veut par exemple juste utiliser DrawTree pour générer des images png de nos arbres.
+
+On pourra alors simplement appeller la méthode permettant de générer les images png (voir en détail plus loin) :
+
+```java
+ExempleTree et = new ExempleTree();
+
+DrawTree dt = new DrawTree(et, true, false);
+
+// [...]
+
+dt.saveImage("C:\\export.png");
+```
+
 ## Méthodes de l'objet DrawTree
 
-On peut appeler certaines méthodes sur notre objet 'DrawTree' (indépendamment de comment on l'a créé)
+On peut appeler certaines méthodes sur notre objet `DrawTree` (indépendamment de comment et où on l'a créé)
 
 **refresh()**
 
@@ -196,9 +223,23 @@ Enregistre l'arbre dans une image png, dont le chemin est passé en argument.
 
 La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un png toussa toussa !
 
+saveImage() ne fait pas appel à refresh avant d'enregistrer l'image. Il faut donc d'abord appeler refresh si il y a des changements qui n'ont pas encore subi refresh().
+
 **setNodeWidth(int width) et setNodeHeight(int height)**
  
 Permet de modifier respectivement la largeur et la hauteur des noeuds dans l'affichage. Si l'argument est -1, il ne va rien modifier et juste renvoyer la valeur actuelle.
+
+**Personnaliser les couleurs**
+
+Il existe trois méthodes pour changer les couleurs utilisées pour les images.
+
+Pour chaque méthode, si l'argument est null, la valeur actuelle sera renvoyée sans rien changer.
+
+```java
+setBkgColor (Color newColor); // Couleur de font
+setDefaultColor (Color newColor); // Couleur d'écriture par défaut
+setAltColor (Color newColor); // Couleur d'écriture secondaire (utilisée pour les liens rouges dans les red-black)
+```
 
 ## ExempleTree
 
@@ -215,5 +256,5 @@ Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pou
 * Scroll dans la console
 * Vérifier l'utilité de tous les import
 * Faire des arbres 2-3
-* setColors
-* Pouvoir créer le truc sans forcément l'afficher (par exemple si tu faux juste générer une image)
+* Appeler refresh avant de saver une image
+* Pouvoir exporter une image transparent

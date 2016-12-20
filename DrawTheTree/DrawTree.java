@@ -71,6 +71,9 @@ public class DrawTree {
     private int labelLimit = 10; // nombre max de char dans le string du label (le reste sera enlevé et remplacé par ~)
     private int espaceX = 10; // moitié de l'espace qu'il y a entre les deux liens qui partent vers les fils
     
+    // True si la fenetre a été ouverte
+    private boolean openView = false;
+    
     // Frame qui affiche tout
     private JFrame jFrame;
     
@@ -87,6 +90,8 @@ public class DrawTree {
     private Color colorDefault = Color.black; // couleur par défaut
     private Color colorAlt = Color.red; // couleur secondaire (red pour red-black)
     
+    private boolean transparentBkg = false; // si true, les images affichées et exportées seront sans fond
+    
     // Textarea qui sers de console
     private JTextArea taInfos;
     
@@ -98,9 +103,11 @@ public class DrawTree {
         paintImage = new BufferedImage(x, y, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics g = paintImage.createGraphics();
         
-        // Mets la couleur de fond de l'image
-        g.setColor(colorBkg);
-        g.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
+        // Mets la couleur de fond de l'image (uniquement si transparentBkg est false)
+        if (!transparentBkg) {
+            g.setColor(colorBkg);
+            g.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
+        }
         
         g.dispose();
     }
@@ -232,7 +239,7 @@ public class DrawTree {
         public DrawFrame(DrawTree parent) {
             this.parent = parent;
             
-            this.setTitle("DrawTheTree - DenisM");
+            this.setTitle("DrawTheTree - A little tool by DenisM");
             this.setLayout(new BorderLayout());
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.setLocationRelativeTo(null);
@@ -348,9 +355,10 @@ public class DrawTree {
      * 
      * Stocke l'arbre à afficher, crée la frame, et appelle refresh() pour afficher
      */
-    public DrawTree(DrawableTree tree, boolean youWantTheView) {
+    public DrawTree(DrawableTree tree, boolean transparent, boolean youWantTheView) {
         // Stocke l'arbre a afficher
         this.tree = tree;
+        this.transparentBkg = transparent;
         
         if (youWantTheView)  view();
         
@@ -358,11 +366,13 @@ public class DrawTree {
         refresh();
     }
     
-    public DrawTree(DrawableTree tree) {
-        this(tree, true);
+    public DrawTree(DrawableTree tree, boolean transparent) {
+        this(tree, transparent, true);
     }
     
-    private boolean openView = false;
+    public DrawTree(DrawableTree tree) {
+        this(tree, false, true);
+    }
     
     public void view() {
         if (openView) return;
@@ -455,5 +465,41 @@ public class DrawTree {
         if (height>-1) this.nodeHeight = height;
         refresh();
         return this.nodeHeight;
+    }
+    
+    /**
+     * Permet de changer la couleur de font des images
+     * Si le paramètre est null, aucun changement (renvoie juste la couleur actuelle)
+     */
+    public Color setBkgColor (Color newColor) {
+        if (newColor!=null) this.colorBkg = newColor;
+        refresh();
+        return this.colorBkg;
+    }
+    
+    /**
+     * Permet de changer la couleur d'éciture dans les images
+     * Si le paramètre est null, aucun changement (renvoie juste la couleur actuelle)
+     */
+    public Color setDefaultColor (Color newColor) {
+        if (newColor!=null) this.colorDefault = newColor;
+        refresh();
+        return this.colorDefault;
+    }
+    
+    /**
+     * Permet de changer la couleur secondaire (principalement utilisée pour les red-black)
+     * Si le paramètre est null, aucun changement (renvoie juste la couleur actuelle)
+     */
+    public Color setAltColor (Color newColor) {
+        if (newColor!=null) this.colorAlt = newColor;
+        refresh();
+        return this.colorAlt;
+    }
+    
+    public boolean setTransparentBackground(boolean transparent) {
+        this.transparentBkg = transparent;
+        refresh();
+        return transparent;
     }
 }
