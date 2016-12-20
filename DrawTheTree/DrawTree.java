@@ -1,16 +1,20 @@
 package DrawTheTree;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+
+// Pour les frames, fenetres et tout
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
+// Pour le dialogue pour enregistrer
+import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+// Pour écouter les events dans les fenetres
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,7 +30,6 @@ import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 
-
 import java.awt.Color;
 
 import java.awt.Graphics;
@@ -36,45 +39,75 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import java.util.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 /**
- * Write a description of class DrawTool here.
+ * Classe pour permettre de visualiser une implémantation d'arbre
  * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Documentation complète disponible sur GitHub : https://github.com/Zibeline/DrawTheTree
+ * 
+ * @author DenisM
+ * @version Décembre 2016
  */
 public class DrawTree {
+    // Taille maximale des images produites (si on fait plus grand on as des erreurs)
+    private int maxX = 15000;
+    private int maxY = 900;
+    
+    // Informations sur l'arbre � afficher
+    private DrawableTree tree; // objet qui repr�sente l'arbre � afficher
+    private int treeHeight; // hauteur de l'arbre
+    
+    // Informations sur les constantes pour l'affichage
+    private int nodeXpadding = 4; // marge � gauche et � droite de chaque noeud
+    private int lineHeight = 100; // hauteur entre deux lignes
+    private int paddingY = 10; // padding en haut et en bas de l'image
+    
+    // Informations sur les noeuds pour l'affichage
+    private int nodeHeight = 15; // leur hauteur
+    private int nodeWidth = 80; // leur largeut
+    private int labelLimit = 10; // nombre max de char dans le string du label (le reste sera enlevé et remplacé par ~)
+    private int espaceX = 10; // moitié de l'espace qu'il y a entre les deux liens qui partent vers les fils
+    
+    // Frame qui affiche tout
     private JFrame jFrame;
+    
+    // Objet qui affiche l'arbre
     private Drawer drawer;
     
-    private DrawableTree tree;
-    
+    // Taille de l'image (sera calculé dyamiquement, ces valeurs par défaut ne servent à rien)
     private int x = 8000;
     private int y = 700;
     
-    private int paddingY = 10;
+    // Couleurs pour un peu tout
+    private Color colorBkg = new Color(255, 255, 255); // couleur de fond de l'image
+    private Color colorDefault = Color.black; // couleur par défaut
+    private Color colorAlt = Color.red; // couleur secondaire (red pour red-black)
     
-    private int lineHeight;
-    
-    private int nodeHeight = 15;
-    private int nodeWidth = 80;
-    
+    // Textarea qui sers de console
     private JTextArea taInfos;
     
-    public class Drawer extends JPanel {
-        private BufferedImage paintImage;// = new BufferedImage(x, y, BufferedImage.TYPE_4BYTE_ABGR);
-        
+    // BufferedImage qui contient la représentation visuelle de l'arbre
+    private BufferedImage paintImage;
+    
+    private class Drawer extends JPanel {
         public Drawer () {
             clean();
         }
         
+        /**
+         * Nettoie l'image (en crée une nouvelle en somme)
+         */
         public void clean() {
+            // Crée une nouvelle image
             paintImage = new BufferedImage(x, y, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics g = paintImage.createGraphics();
             
-            g.setColor ( new Color ( 255, 255, 255 ) );
-            g.fillRect ( 0, 0, paintImage.getWidth(), paintImage.getHeight() );
+            // Mets la couleur de fond de l'image
+            g.setColor(colorBkg);
+            g.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
             
             g.dispose();
             repaint();
@@ -85,25 +118,27 @@ public class DrawTree {
             super.paintComponent(g);
             g.drawImage(paintImage, 0, 0, null);
         }
-            
-        public void save(String file) throws IOException{
-            ImageIO.write(paintImage, "PNG", new File(file));
-        }
         
+        // Dessine un nouveau node
         public void addNode(DrawNode noeud) {
             Graphics g = paintImage.createGraphics();
 
-            g.setColor(Color.black);
+            g.setColor(colorDefault); // mets la couleur par défaut
             
-            g.drawRect(noeud.x-Math.round(nodeWidth/2), noeud.y, nodeWidth, nodeHeight);
-            int labelLimit = 10;
+            g.drawRect(noeud.x-Math.round(nodeWidth/2), noeud.y, nodeWidth, nodeHeight); // trace le rectangle du noeud
+            
+            // Découpe le label si nécessaire (en fonction de labelLimit) et l'affiche
             String label = (noeud.label.length()>labelLimit) ? noeud.label.substring(0,labelLimit)+"~" : noeud.label;
             g.drawString(label, noeud.x-Math.round(nodeWidth/2)+2, noeud.y+nodeHeight-2);
-                
+            
+            // Si il y a un noeud parent, on va afficher le lien vers celui ci
             if (noeud.parent != null) {
-                if (noeud.color) g.setColor(Color.red);
-                g.drawLine(noeud.x, noeud.y, noeud.parent.x, noeud.parent.y+nodeHeight);
-                g.setColor(Color.black);
+                if (noeud.color) g.setColor(colorAlt); // si ce noeud est red, le lien depuis son parent sera dessiné en couleur alt (rouge par défaut)
+                // calcule pour décaler le x de fin pour ne pas que les deux liens se touchent
+                // si le parent est plus à droite on diminue le x et sinon on l'augmente
+                int endX = (noeud.parent.x-noeud.x>0) ? noeud.parent.x-espaceX : noeud.parent.x+espaceX;
+                g.drawLine(noeud.x, noeud.y, endX, noeud.parent.y+nodeHeight);
+                g.setColor(colorDefault);
             }
             
             g.dispose();
@@ -111,14 +146,15 @@ public class DrawTree {
         }
     }
     
-    public class DrawNode {
+    /**
+     * Représente un node de manière compréhensible et utilisable pour pouvoir le dessiner
+     */
+    private class DrawNode {
         public int x;
         public int y;
-        
-        public DrawNode parent;
-        
         public String label;
         public boolean color;
+        public DrawNode parent;
         
         public DrawNode(int x, int y, String label, boolean color) {
             this.x      = x;
@@ -137,20 +173,73 @@ public class DrawTree {
         }
     }
     
-    public class DrawFrame extends JFrame implements ActionListener {
+    /**
+     * Panel pour les settings
+     */
+    private class DrawSettings extends JPanel implements ActionListener {
+        private JTextField inpNodeWidth;
+        private JTextField inpNodeHeight;
+    
+        private DrawTree parent;
+        
+        public DrawSettings(DrawTree parent) {
+            this.parent = parent;
+        
+            this.setLayout(new GridBagLayout());
+         
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.anchor = GridBagConstraints.WEST;
+            constraints.insets = new Insets(10, 10, 10, 10);
+         
+            inpNodeWidth = new JTextField(6);
+            inpNodeWidth.setText(Integer.toString(parent.setNodeWidth(-1)));
+            inpNodeWidth.addActionListener(this);
+         
+            inpNodeHeight = new JTextField(6);
+            inpNodeHeight.setText(Integer.toString(parent.setNodeHeight(-1)));
+            inpNodeHeight.addActionListener(this);
+            
+            // add components to the panel
+            constraints.gridx = 0;
+            constraints.gridy = 0;     
+            this.add(new JLabel("Largeur noeud :"), constraints);
+ 
+            constraints.gridx = 1;
+            this.add(inpNodeWidth, constraints);
+            
+            // add components to the panel
+            constraints.gridx = 0;
+            constraints.gridy = 1;     
+            this.add(new JLabel("Hauteur noeud :"), constraints);
+ 
+            constraints.gridx = 1;
+            this.add(inpNodeHeight, constraints);
+         
+        }
+    
+        public void actionPerformed(ActionEvent arg0) {
+            // En fonction de l'action mets à jour les settings
+            if(arg0.getSource() == inpNodeWidth)  parent.setNodeWidth(Integer.parseInt(inpNodeWidth.getText()));
+            if(arg0.getSource() == inpNodeHeight)  parent.setNodeHeight(Integer.parseInt(inpNodeHeight.getText()));
+        }
+    }
+    
+    /**
+     * Fenetre globale
+     */
+    private class DrawFrame extends JFrame implements ActionListener {
         private JPanel container = new JPanel();
         
         private JPanel sidebar = new JPanel();
         
-        private JButton btnSave = new JButton("Exporter en png");
+        private JButton btnSave = new JButton("Exporter une image png");
         private JButton btnRefresh = new JButton("Rafraichir");
-        
-        private JLabel lbInfos;
         
         private DrawTree parent;
         
         public DrawFrame(DrawTree parent) {
             this.parent = parent;
+            
             this.setTitle("DrawTheTree - DenisM");
             this.setLayout(new BorderLayout());
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -166,21 +255,23 @@ public class DrawTree {
             container.setLayout(new BorderLayout());
             
             sidebar.setBackground(Color.orange);
-            sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+            //sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
             sidebar.setPreferredSize(new Dimension(300, 300));
-            
-            lbInfos = new JLabel("Infos sur le graphe");
             
             taInfos = new JTextArea(5, 20);
             JScrollPane tapInfos = new JScrollPane(taInfos); 
-            
             taInfos.setPreferredSize(new Dimension(25, 25));
             taInfos.setEditable(false);
             
+            JPanel settings = new DrawSettings(parent);
+            
             sidebar.add(Box.createVerticalGlue());
             sidebar.add(btnSave);
+            sidebar.add(new JLabel("Modifier les paramètres"));
+            sidebar.add(settings);
             sidebar.add(Box.createRigidArea(new Dimension(0,20)));
-            sidebar.add(lbInfos);
+            
+            sidebar.add(new JLabel("Infos sur l'arbre"));
             sidebar.add(tapInfos);
             sidebar.add(Box.createRigidArea(new Dimension(0,20)));
             sidebar.add(btnRefresh);
@@ -195,15 +286,11 @@ public class DrawTree {
                 sidebar.add(picLabel);
             } catch (IOException e) {}
             
-            
-            
             btnSave.addActionListener(this);
             btnRefresh.addActionListener(this);
             
             container.add(sidebar, BorderLayout.WEST);
             container.add(scrollPane, BorderLayout.CENTER);
-            
-            
             
             this.setSize(800, 600);
 
@@ -212,9 +299,8 @@ public class DrawTree {
         }
         
         public void actionPerformed(ActionEvent arg0) {
-            System.out.println(arg0.getSource());
+            // Si on a appuyé pour enregistrer l'image, dialogue pour choisir ou enregistrer puis appel de méthode pour enregistrer
             if(arg0.getSource() == btnSave) {
-                
                 JFileChooser c = new JFileChooser();
                 
                 c.setSelectedFile(new File("DrawTheTree_export.png"));
@@ -226,9 +312,8 @@ public class DrawTree {
                     String file = c.getSelectedFile().getName();
                     String path = c.getCurrentDirectory().toString();
                     String ff = path+"\\"+file;
-                    try {
-                        drawer.save(ff);
-                    } catch (IOException e) {}
+                    
+                    parent.saveImage(ff);
                 }
                 if (rVal == JFileChooser.CANCEL_OPTION) {
                     //filename.setText("You pressed cancel");
@@ -236,58 +321,128 @@ public class DrawTree {
                 }
             }
             
+            // Si appuryé sur refresh, appel de refresh (obvious)
             if(arg0.getSource() == btnRefresh) {
                 parent.refresh();
             }
         }
     }
     
+    /**
+     * Enregistre l'image dans le fichier 
+     * Ne peut être que en PNG
+     * Retourne true si pas d'erreur
+     */
+    public boolean saveImage(String file) {
+        try {
+            ImageIO.write(paintImage, "PNG", new File(file));
+        } catch (IOException e) {
+            addInfo("L'image a pas pu être enregistrée");
+            return false;
+        }
+        addInfo("L'image a été enregistrée");
+        return true;
+    }
+    
+    /**
+     * Ajoute une ligne d'infos dans la console de gauche
+     */
     public void addInfo(String info) {
         taInfos.append(info+"\n");
     }
     
+    /**
+     * Constructeur
+     * 
+     * Stocke l'arbre à afficher, crée la frame, et appelle refresh() pour afficher
+     */
     public DrawTree(DrawableTree tree) {
+        // Stocke l'arbre a afficher
         this.tree = tree;
+        
+        // Cr�e la frame qui va tout afficher
         jFrame = new DrawFrame(this);
         
+        // Appelle refresh pour afficher
         refresh();
     }
     
+    /**
+     * Raffraichit l'affichage de l'arbre
+     * Est utile pour soit l'afficher une premi�re fois soit pour le mettre � jour apr�s qu'il ait �t� modifi�
+     */
     public void refresh() {
-        int treeHeight = tree.DrawableHeight();
+        // Récupère la hauteur de l'arbre (en faisant appel � la m�thode ajout�e dans la classe de l'arbre)
+        treeHeight = tree.DrawableHeight();
         
-        this.x = (int) Math.pow(2, treeHeight) * (nodeWidth+8);
-        if (this.x > 15000)this.x = 15000;
+        // Calcule la taille de l'image � cr�er
         
-        this.y = (treeHeight+1)*120;
-        if (this.y > 900)this.y = 900;
+        // Pour la largeur 2^treeHeight nous donne le nombre max de noeuds en parall�le
+        // Ensuite on limte cette taille � la taille max
+        this.x = (int) Math.pow(2, treeHeight) * (nodeWidth+2*nodeXpadding);
+        if (this.x > maxX)this.x = maxX;
         
-        int dispoY = this.y-2*paddingY-nodeHeight;
-        this.lineHeight = (int) Math.floor(dispoY/(treeHeight+1));
+        // Pour y, hauteur d'une ligne * nombre de lignes + on ajoute le padding
+        // Ensuite on limte cette taille � la taille max
+        this.y = ((treeHeight+1)*(lineHeight+nodeHeight))+(2*paddingY);
+        if (this.y > maxY)this.y = maxY;
         
+        // On recalcule qd même la lineHeight pour si jamais y a été limité en size
+        int dispY = this.y-(2*paddingY);
+        this.lineHeight = (int) Math.ceil(dispY/(treeHeight+1));
+        
+        // Nettoie l'image
         drawer.clean();
+        // Taille de l'image en fonction des valeurs qu'on vient de calculer
+        drawer.setPreferredSize(new Dimension(x, y)); 
         
-            drawer.setPreferredSize(new Dimension(x, y)); 
-        
+        // Affichage des infos
         addInfo("~~~~ REFRESH ~~~~");
-        
-        
-        //addInfo("Size : "+tree.size());
+        addInfo("Size : "+tree.DrawableSize());
         addInfo("Height : "+treeHeight);
-        /*addInfo("isEmpty : "+tree.isEmpty());
-        addInfo("isEmpty : "+tree.isEmpty());
-        */
+       
+        // Ajout du premier node (les autres s'ajouteront récursivement)
         addNode(tree.DrawableRoot(), 0, 1, null);
     }
     
-    public void addNode(DrawableNode runner, int line, int index, DrawNode parent) {
+    /**
+     * Ajoute une node
+     * Va transformer une node telle que définie dans le tree en node telle que nous on les aime (à savoir avec leur position, ...)
+     * line représente la ligne. 
+     * Pour index voir réponse ici : http://stackoverflow.com/questions/14184655/set-position-for-drawing-binary-tree
+     */
+    private void addNode(DrawableNode runner, int line, int index, DrawNode parent) {
+        // Calcule la position x et y
         int posX = index * x / (1 + (int) Math.pow(2, line));
         int posY = line*lineHeight+paddingY;
         
+        // Crée le nouvel objet et l'ajoute à l'image
         DrawNode node = new DrawNode(posX, posY, runner.DrawableLabel(), runner.DrawableRed(), parent);
         drawer.addNode(node);
         
+        // Si enfant, on l'ajoute
         if (runner.DrawableLeft() != null) addNode(runner.DrawableLeft(), line+1, 2*index-1, node);
         if (runner.DrawableRight() != null) addNode(runner.DrawableRight(), line+1, 2*index, node);
+    }
+    
+    /**
+     * Définis la largeur du rectangle d'un node
+     * Si le paramètre est -1, ne change rien (renvoie juste la valeur actuelle)
+     */
+    public int setNodeWidth(int width) {
+        if (width>-1) this.nodeWidth = width;
+        refresh();
+        return this.nodeWidth;
+    }
+    
+    /**
+     * Définis la hauteur du rectangle d'un node
+     * Si le paramètre est -1, ne change rien (renvoie juste la valeur actuelle)
+     */
+    
+    public int setNodeHeight(int height) {
+        if (height>-1) this.nodeHeight = height;
+        refresh();
+        return this.nodeHeight;
     }
 }

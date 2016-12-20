@@ -1,10 +1,11 @@
 #BlueJ class context
 comment0.params=
-comment0.target=int\ size()
+comment0.target=int\ DrawableSize()
+comment0.text=\r\n\ Renvoie\ la\ taille\ de\ l'arbre\r\n
 comment1.params=
-comment1.target=boolean\ isEmpty()
+comment1.target=int\ DrawableHeight()
+comment1.text=\r\n\ Renvoie\ la\ hauteur\ de\ l'arbre\r\n
 comment2.params=
-comment2.target=int\ DrawableHeight()
-comment3.params=
-comment3.target=DrawableNode\ DrawableRoot()
-numComments=4
+comment2.target=DrawableNode\ DrawableRoot()
+comment2.text=\r\n\ Renvoie\ un\ node\ (qui\ iml\u00E9mente\ DrawableNode)\ de\ la\ racine\ de\ l'arbre\r\n
+numComments=3

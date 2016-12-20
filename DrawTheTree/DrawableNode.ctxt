@@ -1,10 +1,14 @@
 #BlueJ class context
 comment0.params=
 comment0.target=DrawableNode\ DrawableLeft()
+comment0.text=\r\n\ Renvoie\ la\ sous\ node\ de\ gauche\ \r\n
 comment1.params=
 comment1.target=DrawableNode\ DrawableRight()
+comment1.text=\r\n\ Renvoie\ la\ sous\ node\ de\ droite\r\n
 comment2.params=
 comment2.target=java.lang.String\ DrawableLabel()
+comment2.text=\r\n\ Renvoie\ un\ string\ qui\ sera\ affich\u00E9\ pour\ ce\ noeud\r\n
 comment3.params=
 comment3.target=boolean\ DrawableRed()
+comment3.text=\r\n\ Renvoie\ la\ couleur\ (pour\ pouvoir\ faire\ des\ red-black\ tree)\r\n\ Si\ on\ ne\ fait\ pas\ de\ red-black,\ il\ suffit\ de\ toujours\ renvoyer\ true\r\n
 numComments=4
