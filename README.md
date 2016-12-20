@@ -147,19 +147,26 @@ Permet de raffraichir l'arbre. Si on crée l'objet 'DrawTree' directement dans n
     
       // [...]
       
- **addInfo(String info)**
+**addInfo(String info)**
  
- Permet d'ajouter une ligne d'info dans la console de gauche sur la fenêtre d'affichage de l'arbre.
+Permet d'ajouter une ligne d'info dans la console de gauche sur la fenêtre d'affichage de l'arbre.
+
+**saveImage(String file)**
+
+Enregistre l'arbre dans une image png, dont le chemin est passé en argument. 
+
+La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un png toussa toussa
+
+**setNodeWidth(int width) et setNodeHeight(int height)**
  
- ## To Do
+Permet de modifier respectivement la largeur et la hauteur des noeuds dans l'affichage. Si l'argument est -1, il ne va rien modifier et juste renvoyer la valeur actuelle.
+ 
+## To Do
  
 Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pour moi, mais si certains veulent d'amuser à améliorer le code, c'est avec plaisir :)
 
-* Rendre les méthodes private (la ou nécessaire)
+* Ajouter des settings dans la fenetre
+* Ajouter des setters
+* Scroll dans la console
 * Vérifier l'utilité de tous les import
-* Faire une méthode saveImage accessible depuis l'extérieur
-* Adapter l'interface DrawableTree (pas besoin de rendre isEmpty obligatoire vu qu'on ne l'utilise pas)
-* Stocker les limites de size d'image dans des variables, ...
-* Commenter le code
-* Créer un exemple foncitonnel
 * Ajouter screenshots
