@@ -76,6 +76,7 @@ public class DrawTree {
     
     // Objet qui affiche l'arbre
     private Drawer drawer;
+    //private JPanel drawer;
     
     // Taille de l'image (sera calculé dyamiquement, ces valeurs par défaut ne servent à rien)
     private int x = 8000;
@@ -92,57 +93,48 @@ public class DrawTree {
     // BufferedImage qui contient la représentation visuelle de l'arbre
     private BufferedImage paintImage;
     
-    private class Drawer extends JPanel {
-        public Drawer () {
-            clean();
+    private void imageClean() {
+        // Crée une nouvelle image
+        paintImage = new BufferedImage(x, y, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics g = paintImage.createGraphics();
+        
+        // Mets la couleur de fond de l'image
+        g.setColor(colorBkg);
+        g.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
+        
+        g.dispose();
+    }
+    
+    // Dessine un nouveau node
+    public void imageDrawNode(DrawNode noeud) {
+        Graphics g = paintImage.createGraphics();
+
+        g.setColor(colorDefault); // mets la couleur par défaut
+        
+        g.drawRect(noeud.x-Math.round(nodeWidth/2), noeud.y, nodeWidth, nodeHeight); // trace le rectangle du noeud
+        
+        // Découpe le label si nécessaire (en fonction de labelLimit) et l'affiche
+        String label = (noeud.label.length()>labelLimit) ? noeud.label.substring(0,labelLimit)+"~" : noeud.label;
+        g.drawString(label, noeud.x-Math.round(nodeWidth/2)+2, noeud.y+nodeHeight-2);
+        
+        // Si il y a un noeud parent, on va afficher le lien vers celui ci
+        if (noeud.parent != null) {
+            if (noeud.color) g.setColor(colorAlt); // si ce noeud est red, le lien depuis son parent sera dessiné en couleur alt (rouge par défaut)
+            // calcule pour décaler le x de fin pour ne pas que les deux liens se touchent
+            // si le parent est plus à droite on diminue le x et sinon on l'augmente
+            int endX = (noeud.parent.x-noeud.x>0) ? noeud.parent.x-espaceX : noeud.parent.x+espaceX;
+            g.drawLine(noeud.x, noeud.y, endX, noeud.parent.y+nodeHeight);
+            g.setColor(colorDefault);
         }
         
-        /**
-         * Nettoie l'image (en crée une nouvelle en somme)
-         */
-        public void clean() {
-            // Crée une nouvelle image
-            paintImage = new BufferedImage(x, y, BufferedImage.TYPE_4BYTE_ABGR);
-            Graphics g = paintImage.createGraphics();
-            
-            // Mets la couleur de fond de l'image
-            g.setColor(colorBkg);
-            g.fillRect(0, 0, paintImage.getWidth(), paintImage.getHeight());
-            
-            g.dispose();
-            repaint();
-        }
-
+        g.dispose();
+    }
+    
+    private class Drawer extends JPanel {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             g.drawImage(paintImage, 0, 0, null);
-        }
-        
-        // Dessine un nouveau node
-        public void addNode(DrawNode noeud) {
-            Graphics g = paintImage.createGraphics();
-
-            g.setColor(colorDefault); // mets la couleur par défaut
-            
-            g.drawRect(noeud.x-Math.round(nodeWidth/2), noeud.y, nodeWidth, nodeHeight); // trace le rectangle du noeud
-            
-            // Découpe le label si nécessaire (en fonction de labelLimit) et l'affiche
-            String label = (noeud.label.length()>labelLimit) ? noeud.label.substring(0,labelLimit)+"~" : noeud.label;
-            g.drawString(label, noeud.x-Math.round(nodeWidth/2)+2, noeud.y+nodeHeight-2);
-            
-            // Si il y a un noeud parent, on va afficher le lien vers celui ci
-            if (noeud.parent != null) {
-                if (noeud.color) g.setColor(colorAlt); // si ce noeud est red, le lien depuis son parent sera dessiné en couleur alt (rouge par défaut)
-                // calcule pour décaler le x de fin pour ne pas que les deux liens se touchent
-                // si le parent est plus à droite on diminue le x et sinon on l'augmente
-                int endX = (noeud.parent.x-noeud.x>0) ? noeud.parent.x-espaceX : noeud.parent.x+espaceX;
-                g.drawLine(noeud.x, noeud.y, endX, noeud.parent.y+nodeHeight);
-                g.setColor(colorDefault);
-            }
-            
-            g.dispose();
-            repaint();
         }
     }
     
@@ -246,7 +238,7 @@ public class DrawTree {
             this.setLocationRelativeTo(null);
             
             drawer = new Drawer(); // ??
-        
+            
             JScrollPane scrollPane = new JScrollPane(drawer);
             scrollPane.setPreferredSize(new Dimension(300, 300)); // ??
             scrollPane.setBorder(BorderFactory.createLineBorder(Color.orange));
@@ -348,7 +340,7 @@ public class DrawTree {
      * Ajoute une ligne d'infos dans la console de gauche
      */
     public void addInfo(String info) {
-        taInfos.append(info+"\n");
+        if (openView) taInfos.append(info+"\n");
     }
     
     /**
@@ -356,15 +348,29 @@ public class DrawTree {
      * 
      * Stocke l'arbre à afficher, crée la frame, et appelle refresh() pour afficher
      */
-    public DrawTree(DrawableTree tree) {
+    public DrawTree(DrawableTree tree, boolean youWantTheView) {
         // Stocke l'arbre a afficher
         this.tree = tree;
         
-        // Cr�e la frame qui va tout afficher
-        jFrame = new DrawFrame(this);
+        if (youWantTheView)  view();
         
         // Appelle refresh pour afficher
         refresh();
+    }
+    
+    public DrawTree(DrawableTree tree) {
+        this(tree, true);
+    }
+    
+    private boolean openView = false;
+    
+    public void view() {
+        if (openView) return;
+        
+        // Crée la frame qui va tout afficher
+        jFrame = new DrawFrame(this);
+        
+        openView = true;
     }
     
     /**
@@ -392,17 +398,22 @@ public class DrawTree {
         this.lineHeight = (int) Math.ceil(dispY/(treeHeight+1));
         
         // Nettoie l'image
-        drawer.clean();
-        // Taille de l'image en fonction des valeurs qu'on vient de calculer
-        drawer.setPreferredSize(new Dimension(x, y)); 
+        imageClean();
         
-        // Affichage des infos
-        addInfo("~~~~ REFRESH ~~~~");
-        addInfo("Size : "+tree.DrawableSize());
-        addInfo("Height : "+treeHeight);
-       
         // Ajout du premier node (les autres s'ajouteront récursivement)
         addNode(tree.DrawableRoot(), 0, 1, null);
+        
+        if (openView) {
+            // Taille de l'image en fonction des valeurs qu'on vient de calculer
+            drawer.setPreferredSize(new Dimension(x, y)); 
+            
+            // Affichage des infos
+            addInfo("~~~~ REFRESH ~~~~");
+            addInfo("Size : "+tree.DrawableSize());
+            addInfo("Height : "+treeHeight);
+            
+            drawer.repaint();
+        }
     }
     
     /**
@@ -418,7 +429,7 @@ public class DrawTree {
         
         // Crée le nouvel objet et l'ajoute à l'image
         DrawNode node = new DrawNode(posX, posY, runner.DrawableLabel(), runner.DrawableRed(), parent);
-        drawer.addNode(node);
+        imageDrawNode(node);
         
         // Si enfant, on l'ajoute
         if (runner.DrawableLeft() != null) addNode(runner.DrawableLeft(), line+1, 2*index-1, node);

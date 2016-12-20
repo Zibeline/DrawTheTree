@@ -61,6 +61,7 @@ public class ExempleTree implements DrawableTree{
     public static void main(String[] args) {
         ExempleTree et = new ExempleTree();
         
-        DrawTree dt = new DrawTree(et);
+        DrawTree dt = new DrawTree(et, false);
+        dt.saveImage("C:\\Users\\denis\\Documents\\UCL\\2016-2017\\1121\\BLOCUS\\M3\\tt.png");
     }
 }
