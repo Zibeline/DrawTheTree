@@ -179,4 +179,6 @@ Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pou
 * Ajouter des setters
 * Scroll dans la console
 * Vérifier l'utilité de tous les import
-* Ajouter screenshots
+* Faire des arbres 2-3
+* setColors
+* Pouvoir créer le truc sans forcément l'afficher (par exemple si tu faux juste générer une image)
