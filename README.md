@@ -1,5 +1,7 @@
 # DrawTheTree
 
+![DrawTheTree](/DrawTheTree/tree.png?raw=true "DrawTheTree")
+
 DrawTheTree est un package Java qui permet d'afficher une représentation d'un arbre (au plus binaire). Son intérêt réside dans le fait qu'il peut facilement se greffer sur n'importe quelle implémentation d'arbre (red-black, binaire, ...). 
 
 L'implémentation n'est probablement ni la plus efficace ni la plus propre mais son objectif était d'avoir un package que l'on peut facilement venir greffer sur une implémentation d'arbre sans devoir aller modifier le code partout dans le package ou que l'arbre soit implémenté d'une certaine manière.
