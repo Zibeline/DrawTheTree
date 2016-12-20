@@ -38,32 +38,38 @@ Pour fonctionner, il faut que votre arbre respecte certaines conditions et une c
 
 Importer le package dans toutes les classes nécessaires
 
-    import DrawTheTree.*;
+```java
+import DrawTheTree.*;
+```
 
 **Implémenter DrawableTree**
 
 Pour que votre classe qui crée votre arbre puisse être affichée il faut qu'elle implémente l'interface 'DrawableTree'.
 
-    public class ExempleTree implements DrawableTree {
+```java
+public class ExempleTree implements DrawableTree {
+```
 
 L'interface 'DrawableTree' requiert d'implémenter certaines méthodes en plus dans la classe de votre arbre. Ces méthodes sont probablement déjà implémentées dans votre classe mais pour ne pas devoir modifier votre code ni celui du package pour faire en sorte que les noms des méthodes correspondent, on va ajouter quelques méthodes spécifiques qui vont simplement renvoyer le résultat que vos méthoes renvoyent.
 
 Voici les méthodes à implémenter
 
 ```java
-    // Renvoie la taille de l'arbre
-    public int DrawableSize();
+// Renvoie la taille de l'arbre
+public int DrawableSize();
     
-    // Renvoie la hauteur de l'arbre
-    public int DrawableHeight();
+// Renvoie la hauteur de l'arbre
+public int DrawableHeight();
     
-    // Renvoie le noeud qui représente la racine de l'arbre
-    public DrawableNode DrawableRoot();
+// Renvoie le noeud qui représente la racine de l'arbre
+public DrawableNode DrawableRoot();
 ```
 
 Par exemple, si votre implémentation contient une méthode ´size()´ qui renvoie la taille de l'arbre, vous pouvez simplement implémenter ´DrawableSize()´ de cette manière :
 
-    public int DrawableSize() { return size(); }
+```java
+public int DrawableSize() { return size(); }
+```
 
 La méthode qui renvoie la hauteur de l'arbre ne doit pas obligatoirement être exacte. Elle permets juste de calculer la taille de l'image à générer. Si vous n'avez pas de méthode qui permet de le calculer précisément, renvoyez une valeur plafond (= qui est forcément plus grande que la hauteur réelle mais le plus proche possible).
 
@@ -71,22 +77,28 @@ La méthode qui renvoie la hauteur de l'arbre ne doit pas obligatoirement être 
 
 Il faut ensuite étendre la classe qui représente chaque noeud de votre arbre. Pour cela, il faut d'abord que cette classe implémente 'DrawableNode'
 
-    public class ExempleNode implements DrawableNode {
+```java
+public class ExempleNode implements DrawableNode {
+	// [...]
+}
+```
     
 Les méthodes qui doivent être implémentées sont les suivantes :
 
-    // Renvoie l'enfant de gauche
-    public DrawableNode DrawableLeft();
-    
-    // Renvoie l'enfant de droite
-    public DrawableNode DrawableRight();
+```java
+// Renvoie l'enfant de gauche
+public DrawableNode DrawableLeft();
 
-    // Renvoie un string (c'est ce qui sera affiché dans l'arbre pour ce noeud)
-    public String DrawableLabel();
-    
-    // Renvoie true si le lien vers ce noeud est rouge
-    // (si vous ne faites pas de red-black, vous pouvez simplement faire un 'return false;' dans tous les cas)
-    public boolean DrawableRed();
+// Renvoie l'enfant de droite
+public DrawableNode DrawableRight();
+
+// Renvoie un string (c'est ce qui sera affiché dans l'arbre pour ce noeud)
+public String DrawableLabel();
+
+// Renvoie true si le lien vers ce noeud est rouge
+// (si vous ne faites pas de red-black, vous pouvez simplement faire un 'return false;' dans tous les cas)
+public boolean DrawableRed();
+```
 
 A nouveau, si vous avez déjà une méthode qui fait cela, vous pouvez simplement renvoyer le résultat de cette méthode.
 
@@ -96,51 +108,61 @@ Vient maintenant la partie la plus chouette, l'affichage des arbre. Pour cela, p
 
 **Depuis l'extérieur**
 
-On crée notre arbre puis on crée un objet DrawTree pour l'afficher.
+On crée notre arbre puis on crée un objet DrawTree pour l'afficher. Cet exemple se trouve dans la main de ExempleTree.
 
-    SearchTree st = new SearchTree();
-        
-    DrawTree dt = new DrawTree(st);
-        
+```java
+ExempleTree et = new ExempleTree();
+ 
+DrawTree dt = new DrawTree(et);
+```
+
 **Depuis une méthode dans notre classe**
 
-    public class SearchTree implements DrawableTree {
-      // [...]
-    
-      public DrawTree drawer; 
-    
-      public void showTree() {
-          drawer = new DrawTree(this);
-      }
-    
-      public int DrawableHeight() {
-          // [...]
-      }
-    
-      // [...]
-      
+```java
+public class SearchTree implements DrawableTree {
+	// [...]
+
+	public DrawTree drawer; 
+
+	public void showTree() {
+		drawer = new DrawTree(this);
+	}
+
+	public int DrawableHeight() {
+		// [...]
+	}
+
+	// [...]
+}
+``` 
+     
 Et on affiche alors notre arbre ainsi :
 
-    SearchTree st = new SearchTree();
-        
-    st.showTree();
+```java
+SearchTree st = new SearchTree();
+
+st.showTree();
+```
     
 **Directement dans le constructeur**
 
 On peut également directement afficher l'arbre lorsqu'il est construit
 
-    public class SearchTree implements DrawableTree {
-      // [...]
-    
-      public DrawTree drawer;
-      
-      public SearchTree() {
-          // [...]
-          
-          drawer = new DrawTree(this);
-      }
-    
-      // [...]
+```java
+public class SearchTree implements DrawableTree {
+	// [...]
+
+	public DrawTree drawer;
+  
+	public SearchTree() {
+		// [...]
+	  
+		drawer = new DrawTree(this);
+	}
+
+	// [...]
+}
+```
 
 ## Méthodes de l'objet DrawTree
 
@@ -150,18 +172,20 @@ On peut appeler certaines méthodes sur notre objet 'DrawTree' (indépendamment 
 
 Permet de raffraichir l'arbre. Si on crée l'objet 'DrawTree' directement dans notre implémentation d'arbre, on peut par exemple exécuter cette méthde après chaque opération de modification (put, remove, ...)
 
-    public class SearchTree implements DrawableTree {
-      // [...]
-    
+```java
+public class ExempleTree implements DrawableTree {
+	// [...]
      
-      public void remove(Key key) {
-          // [...]
+	public void remove(Key key) {
+		// [...]
           
-          drawer.refresh();
-      }
+		drawer.refresh();
+	}
     
-      // [...]
-      
+	// [...]
+}
+```
+  
 **addInfo(String info)**
  
 Permet d'ajouter une ligne d'info dans la console de gauche sur la fenêtre d'affichage de l'arbre.
@@ -170,7 +194,7 @@ Permet d'ajouter une ligne d'info dans la console de gauche sur la fenêtre d'af
 
 Enregistre l'arbre dans une image png, dont le chemin est passé en argument. 
 
-La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un png toussa toussa
+La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un png toussa toussa !
 
 **setNodeWidth(int width) et setNodeHeight(int height)**
  
@@ -179,7 +203,9 @@ Permet de modifier respectivement la largeur et la hauteur des noeuds dans l'aff
 ## ExempleTree
 
 Une classe ExempleTree se trouve à la racine pour montrer le fonctionnement de ce package. Cette classe ne représente pas un "vrai arbre", c'est simplement 3 noeuds créés manuellement et liés pour montrer comment utiliser le package. A vous de l'adapter à vos besoins.
- 
+
+Pour le lancer, il suffit d'exécuter sa méthode main.
+
 ## To Do
  
 Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pour moi, mais si certains veulent d'amuser à améliorer le code, c'est avec plaisir :)
