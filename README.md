@@ -44,30 +44,34 @@ Importer le package dans toutes les classes nécessaires
 
 Pour que votre classe qui crée votre arbre puisse être affichée il faut qu'elle implémente l'interface 'DrawableTree'.
 
-    implements DrawableTree
+    public class ExempleTree implements DrawableTree {
 
 L'interface 'DrawableTree' requiert d'implémenter certaines méthodes en plus dans la classe de votre arbre. Ces méthodes sont probablement déjà implémentées dans votre classe mais pour ne pas devoir modifier votre code ni celui du package pour faire en sorte que les noms des méthodes correspondent, on va ajouter quelques méthodes spécifiques qui vont simplement renvoyer le résultat que vos méthoes renvoyent.
 
 Voici les méthodes à implémenter
 
+```java
     // Renvoie la taille de l'arbre
-    public int size();
-
-    // Renvoie true si l'arbre est vide
-    public boolean isEmpty();
+    public int DrawableSize();
     
     // Renvoie la hauteur de l'arbre
     public int DrawableHeight();
     
     // Renvoie le noeud qui représente la racine de l'arbre
     public DrawableNode DrawableRoot();
+```
 
-La méthode qui renvoie la hauteur de l'arbre ne doit pas obligatoirement être exacte. Elle permets juste de calculer la taille de l'image à générer. Si vous n'avez pas de méthode qui permet de le calculer précisément, renvoyer une valeur plafond (= qui est forcément plus grande que la hauteur réelle)
+Par exemple, si votre implémentation contient une méthode ´size()´ qui renvoie la taille de l'arbre, vous pouvez simplement implémenter ´DrawableSize()´ de cette manière :
+
+    public int DrawableSize() { return size(); }
+
+La méthode qui renvoie la hauteur de l'arbre ne doit pas obligatoirement être exacte. Elle permets juste de calculer la taille de l'image à générer. Si vous n'avez pas de méthode qui permet de le calculer précisément, renvoyez une valeur plafond (= qui est forcément plus grande que la hauteur réelle mais le plus proche possible).
 
 **Implémenter DrawableNode**
 
 Il faut ensuite étendre la classe qui représente chaque noeud de votre arbre. Pour cela, il faut d'abord que cette classe implémente 'DrawableNode'
-    implements DrawableNode
+
+    public class ExempleNode implements DrawableNode {
     
 Les méthodes qui doivent être implémentées sont les suivantes :
 
@@ -84,8 +88,9 @@ Les méthodes qui doivent être implémentées sont les suivantes :
     // (si vous ne faites pas de red-black, vous pouvez simplement faire un 'return false;' dans tous les cas)
     public boolean DrawableRed();
 
+A nouveau, si vous avez déjà une méthode qui fait cela, vous pouvez simplement renvoyer le résultat de cette méthode.
 
-## Affichage de mes arbres
+## Affichage des arbres
 
 Vient maintenant la partie la plus chouette, l'affichage des arbre. Pour cela, plusieurs manières.
 
@@ -170,6 +175,10 @@ La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un pn
 **setNodeWidth(int width) et setNodeHeight(int height)**
  
 Permet de modifier respectivement la largeur et la hauteur des noeuds dans l'affichage. Si l'argument est -1, il ne va rien modifier et juste renvoyer la valeur actuelle.
+
+## ExempleTree
+
+Une classe ExempleTree se trouve à la racine pour montrer le fonctionnement de ce package. Cette classe ne représente pas un "vrai arbre", c'est simplement 3 noeuds créés manuellement et liés pour montrer comment utiliser le package. A vous de l'adapter à vos besoins.
  
 ## To Do
  
