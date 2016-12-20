@@ -1,14 +1,14 @@
 import DrawTheTree.*;
 
 /**
- * Juste un simple exemple du fonctionnement
+ * Juste un simple exemple du fonctionnement avec la création de DrawTree dans une méthode de l'arbre
  * 
  * Documentation complète disponible sur GitHub : https://github.com/Zibeline/DrawTheTree
  * 
  * @author DenisM
  * @version Décembre 2016
  */
-public class ExempleTree implements DrawableTree{
+public class ExempleTreeMeth implements DrawableTree{
     private ExempleNode root;
 
     public class ExempleNode implements DrawableNode {
@@ -39,11 +39,17 @@ public class ExempleTree implements DrawableTree{
         }
     }
     
-    public ExempleTree() {
+    public ExempleTreeMeth() {
         ExempleNode enLeft = new ExempleNode("Gauche", null, null);
         ExempleNode enRight = new ExempleNode("Droite", null, null);
         
         root = new ExempleNode("Racine", enLeft, enRight);
+    }
+    
+    // ***** Partie spécifique à cet exemple *****
+    
+    public void showTree() {
+        DrawTree dt = new DrawTree(this);
     }
     
     public int DrawableSize() {
@@ -59,8 +65,8 @@ public class ExempleTree implements DrawableTree{
     }
     
     public static void main(String[] args) {
-        ExempleTree et = new ExempleTree();
+        ExempleTreeMeth et = new ExempleTreeMeth();
         
-        DrawTree dt = new DrawTree(et, true);
+        et.showTree();
     }
 }
