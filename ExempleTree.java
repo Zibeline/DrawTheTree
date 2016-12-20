@@ -1,7 +1,9 @@
 import DrawTheTree.*;
 
 /**
- * Juste un simple exemple fu fonctionnement
+ * Juste un simple exemple du fonctionnement
+ * 
+ * Documentation complète disponible sur GitHub : https://github.com/Zibeline/DrawTheTree
  * 
  * @author DenisM
  * @version Décembre 2016

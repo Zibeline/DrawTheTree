@@ -6,6 +6,14 @@ DrawTheTree est un package Java qui permet d'afficher une représentation d'un a
 
 L'implémentation n'est probablement ni la plus efficace ni la plus propre mais son objectif était d'avoir un package que l'on peut facilement venir greffer sur une implémentation d'arbre sans devoir aller modifier le code partout dans le package ou que l'arbre soit implémenté d'une certaine manière.
 
+## Screenshots
+
+Voici une capture d'écran de la fenêtre ainsi que d'un exemple d'image d'arbre qu'il est possible de générer avec ce package.
+
+![Screenshot](/screenshot.png?raw=true "Screenshot")
+
+![Sample](/sample.png?raw=true "Sample")
+
 ## Disclaimer
 
 Ce package est un petit projet réalisé rapidement pour répondre à un besoin (visualiser un arbre pour débugguer un projet). N'ayant pas trouvé de solution que je pouvais facilement insérer dans ma structure de données, j'ai décidé d'écrire mon propre code. Et tant qu'à faire, autant le faire de manière le plus générique possible, pour pouvoir le réutiliser ou l'adapter à d'autres implémentations d'arbres. Après je me suis dit que si il m'étais utile, il pouvais peut-être l'être pour d'autres... Ce projet n'a pas la prétention d'être la solution ultime et complète, il a juste pour objectif de pouvoir facilement ajouter la possibilité de voir son implémentation d'arbre de manière visuelle.
