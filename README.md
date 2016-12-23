@@ -97,7 +97,7 @@ On pourra alors simplement appeller la méthode permettant de générer les imag
 ```java
 ExempleTree et = new ExempleTree();
 
-DrawTree dt = new DrawTree(et, true);
+DrawTree dt = new DrawTree(et.root, true);
 
 // [...]
 
@@ -130,7 +130,7 @@ public class ExempleTreeMeth implements DrawableTree {
 	public DrawTree dt; 
 
 	public void showTree() {
-		dt = new DrawTree(this);
+		dt = new DrawTree(this.root);
 	}
 
 	public int DrawableHeight() {
@@ -162,7 +162,7 @@ public class ExempleTreeInt implements DrawableTree {
 	public ExempleTreeInt() {
 		// [...]
 	  
-		dt = new DrawTree(this);
+		dt = new DrawTree(this.root);
 	}
 
 	// [...]
@@ -233,3 +233,7 @@ Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pou
 * Vérifier l'utilité de tous les import
 * Faire des arbres 2-3
 * Appeler refresh avant de saver une image
+
+## Changelog
+
+* V2.0 - 23/12/2016 : plus besoin que l'arbre implémente une interface (uniquement le noeud doit implémenter une interface) et plein d'autres améliorations majeures
