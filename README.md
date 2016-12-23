@@ -28,9 +28,7 @@ Pour fonctionner, il faut que votre arbre respecte certaines conditions et une c
 
 * Votre arbre peut au plus être binaire (donc soit une liste soit binaire)
 * Il peut avoir des liens de deux couleurs
-* Il doit être implémenté dans une classe
-* Dans cette classe, on a un noeud racine
-* On a une classe qui représente un noeud
+* Il faut avoir un noeud racine et une classe qui représente un noeud
 
 ## Utilisation
 
@@ -42,40 +40,9 @@ Importer le package dans toutes les classes nécessaires :
 import DrawTheTree.*;
 ```
 
-**Implémenter DrawableTree**
-
-Pour que votre classe qui crée votre arbre puisse être affichée il faut qu'elle implémente l'interface `DrawableTree`.
-
-```java
-public class ExempleTree implements DrawableTree {
-```
-
-L'interface `DrawableTree` requiert d'implémenter certaines méthodes en plus dans la classe de votre arbre. Ces méthodes sont probablement déjà implémentées dans votre classe mais pour ne pas devoir modifier votre code ni celui du package pour faire en sorte que les noms des méthodes correspondent, on va ajouter quelques méthodes spécifiques qui vont simplement renvoyer le résultat que vos méthodes renvoyent.
-
-Voici les méthodes à implémenter :
-
-```java
-// Renvoie la taille de l'arbre
-public int DrawableSize();
-    
-// Renvoie la hauteur de l'arbre
-public int DrawableHeight();
-    
-// Renvoie le noeud qui représente la racine de l'arbre
-public DrawableNode DrawableRoot();
-```
-
-Par exemple, si votre implémentation contient une méthode `size()` qui renvoie la taille de l'arbre, vous pouvez simplement implémenter `DrawableSize()` de cette manière :
-
-```java
-public int DrawableSize() { return size(); }
-```
-
-La méthode qui renvoie la hauteur de l'arbre ne doit pas obligatoirement être exacte. Elle permets juste de calculer la taille de l'image à générer. Si vous n'avez pas de méthode qui permet de le calculer précisément, renvoyez une valeur plafond (= qui est forcément plus grande que la hauteur réelle mais le plus proche possible).
-
 **Implémenter DrawableNode**
 
-Il faut ensuite étendre la classe qui représente chaque noeud de votre arbre. Pour cela, il faut d'abord que cette classe implémente `DrawableNode` :
+Il faut ensuite modifier la classe qui représente un noeud de votre arbre. Pour cela, il faut d'abord que cette classe implémente `DrawableNode` :
 
 ```java
 public class ExempleNode implements DrawableNode {
@@ -83,7 +50,7 @@ public class ExempleNode implements DrawableNode {
 }
 ```
     
-Les méthodes qui doivent être implémentées sont les suivantes :
+Les méthodes qui doivent ensuite être implémentées sont les suivantes :
 
 ```java
 // Renvoie l'enfant de gauche
@@ -100,20 +67,56 @@ public String DrawableLabel();
 public boolean DrawableRed();
 ```
 
-A nouveau, si vous avez déjà une méthode qui fait cela, vous pouvez simplement renvoyer le résultat de cette méthode.
+Si vous avez déjà une méthode qui fait une de ces opérations, vous pouvez simplement renvoyer le résultat de votre méthode dans la méthode a implémenter. Si vous avez par exemple une méthode `getTheLabel()`, vous pouvez implémenter `DrawableLabel()` de cette manière :
 
-## Affichage des arbres
+```java
+public String DrawableLabel() {
+	return getTheLabel();
+}
+```
 
-Vient maintenant la partie la plus chouette, l'affichage des arbre. Pour cela, plusieurs manières.
+## Construire un DrawTree
+
+Vient maintenant la partie la plus chouette, l'affichage des arbres. Pour cela, il suffit de créer un objet `DrawTree`.
+
+Le constructeur de `DrawTree` prends comme premier paramètre un `DrawableNode` qui représente la racine de l'arbre.
+
+Il est aussi pobbible de lui passer trois arguments supplémentaires facultatifs. 
+
+```java
+DrawTree(DrawableTree tree, boolean youWantTheView, HashMap<String, Comparable> settings)
+```
+
+* `boolean youWantTheView` : si il vaut true, une fenêtre avec l'arbre sera affichée et si il vaut false il créera seulement l'objet [par défaut: true]
+* `HashMap<String, Comparable> settings` : un `HashMap` de paramètres pour modifier les paramètres par défaut (voir la liste des paramètres qu'on peut modifier plus bas)
+
+Mettre `youWantTheView` à `false` peut être intéressant si on veut par exemple juste utiliser `DrawTree` pour générer des images png de nos arbres.
+
+On pourra alors simplement appeller la méthode permettant de générer les images png (voir en détail plus loin) :
+
+```java
+ExempleTree et = new ExempleTree();
+
+DrawTree dt = new DrawTree(et, true);
+
+// [...]
+
+dt.saveImage("C:\\export.png");
+```
+
+
+## Comment créer le constructeur
+
+On peut créer le contructeur à plusieurs endroits différents :
 
 **Depuis l'extérieur**
 
-On crée notre arbre puis on crée un objet `DrawTree` pour l'afficher. On trouve un exemple de cette technique dans `ExempleTreeExt`.
+On crée notre arbre normalement puis on crée un objet `DrawTree` pour l'afficher. On trouve un exemple de cette technique dans `ExempleTreeExt`.
 
 ```java
 ExempleTreeExt et = new ExempleTreeExt();
- 
-DrawTree dt = new DrawTree(et);
+
+DrawTree dt = new DrawTree(et.root);
 ```
 
 **Depuis une méthode dans notre classe**
@@ -166,32 +169,7 @@ public class ExempleTreeInt implements DrawableTree {
 }
 ```
 
-## Le constructeur de DrawTree
 
-Ici au dessus nous avons vu le constructeur de `DrawTree` sous sa forme la plus simple : avec comme seul argument l'arbre qu'on veut afficher.
-
-En réalité, il est pobbible de lui passer deux argument supplémentaires facultatifs :
-
-```java
-DrawTree(DrawableTree tree, boolean transparent, boolean youWantTheView)
-```
-
-* `boolean transparent` : si il vaut true, les images affichées et exportées en png seront transparentes (sans fond) [par défaut: false]
-* `boolean youWantTheView` : si il vaut true, une fenêtre avec l'arbre sera affichée et si il vaut false il créera seulement l'objet [par défaut: true]
-
-Mettre `youWantTheView` à `false` peut être intéressant si on veut par exemple juste utiliser `DrawTree` pour générer des images png de nos arbres.
-
-On pourra alors simplement appeller la méthode permettant de générer les images png (voir en détail plus loin) :
-
-```java
-ExempleTree et = new ExempleTree();
-
-DrawTree dt = new DrawTree(et, true, false);
-
-// [...]
-
-dt.saveImage("C:\\export.png");
-```
 
 ## Méthodes de l'objet DrawTree
 
@@ -215,10 +193,6 @@ public class ExempleTree implements DrawableTree {
 }
 ```
   
-**addInfo(String info)**
-
-Permet d'ajouter une ligne d'info dans la console de gauche sur la fenêtre d'affichage de l'arbre.
-
 **saveImage(String file)**
 
 Enregistre l'arbre dans une image png, dont le chemin est passé en argument. 
@@ -227,35 +201,35 @@ La méthode n'est pas défensive et elle ne va pas vérifier si c'est bien un pn
 
 `saveImage()` ne fait pas appel à `refresh()` avant d'enregistrer l'image. Il faut donc d'abord appeler `refresh()` si il y a des changements qui ont été faits.
 
-**setNodeWidth(int width) et setNodeHeight(int height)**
- 
-Permet de modifier respectivement la largeur et la hauteur des noeuds dans l'affichage. Si l'argument est `-1`, il ne va rien modifier et juste renvoyer la valeur actuelle.
+**setSetting(String key, Object value) et setSettings(HashMap<String, Object> newSettings)**
 
-**Personnaliser les couleurs**
+Ces deux méthodes permettent de modifier un ou des paramètres par défaut. Pour modifier plusieurs paramètres on les place dans une HashMap.
 
-Il existe trois méthodes pour changer les couleurs utilisées pour les images.
+Les paramètres qu'on peut modifier sont :
 
-Pour chaque méthode, si l'argument est `null`, la valeur actuelle sera renvoyée sans rien changer.
+* `fontSize` [type: int], [défaut: 15] : taille de la police
+* `nodeWidth` [type: int], [défaut: 80] : largueur d'un noeud
+* `nodePadding` [type: int], [défaut: 3] : padding intérieur de chaque noeud
+* `nodeXmargin` [type: int], [défaut: 4] :  marge à gauche et à droite de chaque noeud
+* `transparentBkg` [type: boolean], [défaut: false] :  arrière plan transparent ou non
+* `colorBkg` [type: Color], [défaut: blanc] : couleur de fond de l'image
+* `colorDefault` [type: Color], [défaut: noir] : couleur par défaut
+* `colorAlt` [type: Color], [défaut: rouge] : couleur secondaire (utilisée pour les liens rouges dans les red-black)
 
-```java
-setBkgColor (Color newColor); // Couleur de font
-setDefaultColor (Color newColor); // Couleur d'écriture par défaut
-setAltColor (Color newColor); // Couleur d'écriture secondaire (utilisée pour les liens rouges dans les red-black)
-```
+**getSetting(String key)**
+
+Cette méthode permets de récupérer la valeur actuelle du setting passé en argument.
 
 ## ExempleTree
 
-Une classe `ExempleTree` se trouve à la racine pour montrer le fonctionnement de ce package. Cette classe ne représente pas un *"vrai arbre"*, c'est simplement 3 noeuds créés manuellement et liés pour montrer comment utiliser le package. A vous de l'adapter à vos besoins.
+Trois classes exemple se trouvent à la racine pour montrer le fonctionnement de ce package. Ces classes ne représentent pas un *"vrai arbre"*, ce sont simplement 3 noeuds créés manuellement et liés pour montrer comment utiliser le package. A vous de les adapter à vos besoins.
 
-Pour le lancer, il suffit d'exécuter sa méthode main.
+Pour voir les exemples, il suffit d'exécuter leur méthode `main`.
 
 ## To Do
  
 Voici quelques améliorations à apporter. Il s'agit plutot d'un pense bête pour moi, mais si certains veulent d'amuser à améliorer le code, c'est avec plaisir :)
 
-* Ajouter des settings dans la fenetre
-* Ajouter des setters
-* Scroll dans la console
 * Vérifier l'utilité de tous les import
 * Faire des arbres 2-3
 * Appeler refresh avant de saver une image

@@ -8,11 +8,11 @@ import DrawTheTree.*;
  * @author DenisM
  * @version Décembre 2016
  */
-public class ExempleTreeInt implements DrawableTree{
+public class ExempleTreeInt {
     private ExempleNode root;
 
     public class ExempleNode implements DrawableNode {
-        private ExempleNode left;
+        public ExempleNode left;
         private ExempleNode right;
         private String label;
         
@@ -22,11 +22,11 @@ public class ExempleTreeInt implements DrawableTree{
             this.label = label;
         }
         
-        public DrawableNode DrawableLeft() {
+        public ExempleNode DrawableLeft() {
             return left;
         }
         
-        public DrawableNode DrawableRight() {
+        public ExempleNode DrawableRight() {
             return right;
         }
 
@@ -43,26 +43,14 @@ public class ExempleTreeInt implements DrawableTree{
     private DrawTree dt;
     
     public ExempleTreeInt() {
-        ExempleNode enLeft = new ExempleNode("Gauche", null, null);
-        ExempleNode enRight = new ExempleNode("Droite", null, null);
+        ExempleNode enLeft = new ExempleNode("ABC", null, null);
+        ExempleNode enRight = new ExempleNode("DEF", null, null);
         
-        root = new ExempleNode("Racine", enLeft, enRight);
+        root = new ExempleNode("GHI", enLeft, enRight);
         
-        dt = new DrawTree(this);
+        dt = new DrawTree(this.root);
     }
-    
-    public int DrawableSize() {
-        return 3;
-    }
-    
-    public int DrawableHeight() {
-        return 2;
-    }
-    
-    public DrawableNode DrawableRoot() {
-        return root;
-    }
-    
+        
     public static void main(String[] args) {
         ExempleTreeInt et = new ExempleTreeInt();
     }

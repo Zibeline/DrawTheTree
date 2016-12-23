@@ -8,7 +8,7 @@ import DrawTheTree.*;
  * @author DenisM
  * @version Décembre 2016
  */
-public class ExempleTreeMeth implements DrawableTree{
+public class ExempleTreeMeth {
     private ExempleNode root;
 
     public class ExempleNode implements DrawableNode {
@@ -22,11 +22,11 @@ public class ExempleTreeMeth implements DrawableTree{
             this.label = label;
         }
         
-        public DrawableNode DrawableLeft() {
+        public ExempleNode DrawableLeft() {
             return left;
         }
         
-        public DrawableNode DrawableRight() {
+        public ExempleNode DrawableRight() {
             return right;
         }
 
@@ -49,19 +49,7 @@ public class ExempleTreeMeth implements DrawableTree{
     // ***** Partie spécifique à cet exemple *****
     
     public void showTree() {
-        DrawTree dt = new DrawTree(this);
-    }
-    
-    public int DrawableSize() {
-        return 3;
-    }
-    
-    public int DrawableHeight() {
-        return 2;
-    }
-    
-    public DrawableNode DrawableRoot() {
-        return root;
+        DrawTree dt = new DrawTree(this.root);
     }
     
     public static void main(String[] args) {

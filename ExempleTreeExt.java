@@ -1,5 +1,8 @@
 import DrawTheTree.*;
 
+import java.util.HashMap;
+import java.awt.Color;
+
 /**
  * Juste un simple exemple du fonctionnement avec la création de DrawTree en dehors de l'arbre
  * 
@@ -8,9 +11,9 @@ import DrawTheTree.*;
  * @author DenisM
  * @version Décembre 2016
  */
-public class ExempleTreeExt implements DrawableTree{
-    private ExempleNode root;
-
+public class ExempleTreeExt {
+    public ExempleNode root;
+    
     public class ExempleNode implements DrawableNode {
         private ExempleNode left;
         private ExempleNode right;
@@ -40,27 +43,20 @@ public class ExempleTreeExt implements DrawableTree{
     }
     
     public ExempleTreeExt() {
-        ExempleNode enLeft = new ExempleNode("Gauche", null, null);
-        ExempleNode enRight = new ExempleNode("Droite", null, null);
+        ExempleNode enLeft = new ExempleNode("Gauche Lorem ipsum dolor", null, null);
+        ExempleNode enRight = new ExempleNode("Droite sit amet blabla", null, null);
         
         root = new ExempleNode("Racine", enLeft, enRight);
-    }
-    
-    public int DrawableSize() {
-        return 3;
-    }
-    
-    public int DrawableHeight() {
-        return 2;
-    }
-    
-    public DrawableNode DrawableRoot() {
-        return root;
     }
     
     public static void main(String[] args) {
         ExempleTreeExt et = new ExempleTreeExt();
         
-        DrawTree dt = new DrawTree(et, true);
+        HashMap setts = new HashMap();
+        setts.put("colorBkg", new Color(255, 0, 255));
+        
+        DrawTree dt = new DrawTree(et.root, true, setts);
+        //dt.setSetting("fontSize", 22);
+        
     }
 }
