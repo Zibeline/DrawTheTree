@@ -26,36 +26,30 @@ import javax.swing.JScrollPane;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
-import java.awt.Font;
 import java.awt.FlowLayout;
 
+import java.awt.Font;
 import java.awt.FontMetrics;
 
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import java.awt.Canvas;
 
+import java.util.Stack;
 import java.util.HashMap;
 
 import java.awt.Color;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-
-import java.util.Stack;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 /**
  * Classe pour permettre de visualiser une implémantation d'arbre
